@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.BoardMapper">	
+	<!-- 게시글 기본출력 : where title like concat('%', #{title}, '%') = 검색도 함께 활성화함 -->
+	<select id="firstBoardList" parameterType="hashmap" resultType="com.example.demo.model.Board">	
+			SELECT 
+				noticenum, nickname, startdate, title, hits, creatorid, boardtype
+			FROM
+				t3_board where 1=1
+		<if test='title != null and title != "" '>
+			and title like concat('%', #{title}, '%') 
+		</if>
+		<if test='boardtype != null and boardtype != ""'>
+			and boardtype = #{boardtype}
+		</if>
+			ORDER BY noticenum DESC
+			LIMIT #{startNum}, #{lastNum}
+	</select>
+	
+	<!-- 게시글 갯수 출력 -->
+	<select id="countBoardCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_board where 1=1
+		<if test='title != null and title != "" '>
+			and title like concat('%', #{title}, '%') 
+		</if>
+		<if test='boardtype != null and boardtype != ""'>
+			and boardtype = #{boardtype}
+		</if>
+	</select>
+	
+	
+	
+	<!-- 게시글 상세 출력 // 동일 칼럼명 들어가 있을 경우. t i 등 지정필수 -->
+	<select id="detailBoard" resultType="com.example.demo.model.Board">	
+		SELECT 
+			t.noticenum, nickname, startdate, title, hits, boardtype, content, creatorid, image
+		FROM
+			t3_board t
+		LEFT OUTER JOIN t3_board_img i on t.noticenum = i.noticenum 
+		WHERE
+			t.noticenum = #{noticenum}
+	</select>
+	
+	<!-- 게시글 수정 -->
+	<update id="editBoard" parameterType="hashmap" >	
+		UPDATE t3_board 
+		SET
+			title = #{title}, content = #{content} 
+		WHERE noticenum = #{noticenum}
+	</update>
+
+	<!-- 게시글 작성 -->
+	<insert id="addBoard" parameterType="hashmap" useGeneratedKeys="true" keyProperty="id" keyColumn="noticenum">	
+		INSERT INTO t3_board 
+			(title, content, hits, startdate, creatorid, boardtype, nickname) 
+		VALUES
+			(#{title}, #{content}, '0', NOW() , #{userId}, #{boardtype}, #{nickname})
+	</insert>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoard" parameterType="hashmap">	
+		DELETE FROM 
+			t3_board 
+		WHERE 
+			noticenum IN ( 
+				<foreach collection="list" item="item" separator=" , ">#{item.noticenum}</foreach> 
+			) 
+	</delete>
+	
+	<!-- 게시글 이미지 추가 -->
+	<insert id="insertBoardImg" parameterType="hashmap">	
+		INSERT INTO t3_board_img
+			(noticenum, image)  
+		VALUES
+			(#{noticenum}, #{img})
+	</insert>
+	
+	<!-- 게시글 조회수 상승 -->
+	<update id="updateCnt" parameterType="hashmap" >	
+		UPDATE t3_board SET hits = hits + 1 WHERE noticenum = #{noticenum}
+	</update>
+</mapper>

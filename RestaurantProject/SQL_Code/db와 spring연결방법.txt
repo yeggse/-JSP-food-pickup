@@ -1,0 +1,10 @@
+<db와 spring 연결방법>
+
+application.properties 에서
+
+localhost 부분을 db-f6avj.pub-cdb.ntruss.com
+
+username: tj_user1 
+password: tjtest12#$
+
+DB이름 springtest를 teamproject로도 수정해 주셔야합니다~~

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.MainMapper">	
+	<!-- 기본 출력 -->
+	<select id="firstList" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		select r.resnum, r.region, r.startdate, r.reskind, r.resname, r.resphone, r.grade, r.resadd, t.average
+		from t3_restaurant r
+		LEFT JOIN (
+			select r.resnum, avg(r2.grade) as average from t3_restaurant r
+			LEFT JOIN t3_review r2 on r.resnum = r2.resnum
+			group by r.resnum
+		) t on r.resnum = t.resnum
+		where 
+		r.region = #{si} AND r.reskind = #{reskind}
+		<if test='gu != null and gu != "" and gu =="0"'> 
+			And r.region1 =#{gu}
+		</if>
+		<if test='recommend != null and recommend != "" and recommend=="0"'>
+			ORDER BY r.resnum ASC
+		</if>
+		<if test='recommend != null and recommend != "" and recommend=="1"'>
+			ORDER BY t.average DESC
+		</if>
+	</select>
+	
+	<!-- 식당명 검색 후 출력 -->
+	<select id="searchList" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		SELECT
+			resnum, region, startdate, reskind, resname, resphone, grade, resadd
+		FROM
+			t3_restaurant	
+		where
+			region = #{si}  and reskind = #{reskind} And (region1 =#{gu} or #{flg})
+			AND resname like concat('%', #{resname1}, '%')
+		ORDER BY resnum ASC
+	</select>	
+	<!-- storeList_Clicked에 클릭했을때 식당들 불러오기위한 resnum -->
+	<select id="searchRes" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		SELECT
+			resnum, region, startdate, reskind, resname, resphone, grade, resadd, resacc
+		FROM
+			t3_restaurant	
+		where
+			resnum = #{resnum}
+	</select>
+	
+	<!-- 지역검색 -->
+	<select id="regionSearch" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		SELECT
+			resnum, region, startdate, reskind, resname, resphone, grade, resadd
+		FROM
+			t3_restaurant	
+		where
+			region like concat('%', #{region}, '%')
+		ORDER BY resnum ASC
+	</select>		
+	
+	
+	<!-- 식당 세션 출력 -->
+	<select id="sessionStore" parameterType="hashmap" resultType="com.example.demo.model.Main">
+		SELECT
+			resnum, ordererid, menuname, orderer, pickuptime, payment, totalprice, review, salecomple
+		FROM
+		t3_restaurant
+	</select>
+	
+	
+	
+	<select id="selectMainList2" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		SELECT
+			board_idx, title, hit_cnt, created_datetime, creator_id
+		FROM
+			t_board
+		WHERE
+			deleted_yn = 'N' AND creator_id = #{creator_id}
+		ORDER BY board_idx DESC
+	</select>
+
+	<select id="searchListArea" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		SELECT
+			resnum, region, reskind, resname, resphone, grade
+		FROM
+			t3_restaurant
+		WHERE 1=1
+			<if test='region != null and region != ""'>
+				title LIKE CONCAT('%', #{region}, '%')
+			</if>
+	</select>
+	
+		<select id="selectSiList" parameterType="hashmap" resultType="com.example.demo.model.Area">	
+		select si
+		from 
+			t_area
+		group by si
+	</select>
+	
+	<select id="selectGuList" parameterType="hashmap" resultType="com.example.demo.model.Area">	
+			select si, gu
+		from 
+			t_area
+		where si = #{si}
+		group by si, gu
+    </select>
+	
+	<select id="selectDongList" parameterType="hashmap" resultType="com.example.demo.model.Area">	
+		select si, gu, dong
+		from 
+			t_area
+		where si = #{si} and gu = #{gu}
+		group by si, gu, dong
+	</select>
+	
+			<select id="selectReskind" parameterType="hashmap" resultType="com.example.demo.model.Main">	
+		select reskind
+		from 
+			t3_reskind
+		where reskind = #{reskind}
+	</select>
+</mapper>
+
+<!-- 
+		<if test='keyword != null and keyword != ""'>
+			and title like concat('%', #{keyword}, '%')
+		</if>
+		ORDER BY board_idx DESC
+ -->

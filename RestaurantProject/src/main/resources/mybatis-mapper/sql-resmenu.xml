@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.ResmenuMapper">	
+	<select id="selectResmenu" parameterType="hashmap" resultType="com.example.demo.model.Res">	
+		SELECT
+			r.idx, reskind, startdate, enddate, menuname, introduce, price, supply, orderer, pickuptime, resnum, picture, 0 as sum <!-- 컬럼을 임의로 추가해서 계산 할 수 있게 만든거임! SQL에는 실제로 추가 된건 아님! -->
+		FROM
+			t3_resmenu r
+		<!-- WHERE resnum = #{resnum} -->
+		LEFT OUTER JOIN t3_resmenu_img i on r.idx = i.idx 
+		WHERE
+			r.idx = #{idx} OR resnum = #{resnum} AND r.soldout= 'N'
+	</select>
+	
+<!-- group by 컬럼명 -->
+
+	<select id="selectResmenu1" parameterType="hashmap" resultType="com.example.demo.model.Res">	
+		SELECT
+			ordererid,menuname,pickuptime,payment,price, idx
+			reskind, startdate,enddate,picture,introduce,supply,orderer,resnum
+		FROM
+			t3_reserve
+		WHERE ordererid = #{id} 
+		
+	</select>
+	
+	<!-- 사업자 메뉴관리 페이지 -->
+	<select id="selectResmenu2" parameterType="hashmap" resultType="com.example.demo.model.Res">	
+			SELECT
+				resnum, menuname, introduce, picture, startdate, enddate, price, supply, t3_resmenu.idx, soldout
+			FROM
+				t3_resmenu
+			LEFT OUTER JOIN 
+				t3_resmenu_img
+			ON 
+				t3_resmenu.idx = t3_resmenu_img.idx
+			WHERE 
+				t3_resmenu.resnum = #{resnum}  
+		<if test='menuname != null and menuname != "" '>
+			and menuname like concat('%', #{menuname}, '%')
+		</if>		
+		LIMIT #{startNum}, #{lastNum}		
+	</select>
+	
+	<!-- 사업자 메뉴관리 페이지 게시물 갯수 -->
+	<select id="selectResmenuCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_resmenu where resnum = #{resnum}
+		<if test='menuname != null and menuname != "" '>
+			and menuname like concat('%', #{menuname}, '%')
+		</if>	
+	</select>
+	
+	
+	
+	
+	<insert id="insertreserve" parameterType="hashmap">
+		INSERT INTO 
+		t3_reserve(resnum,menuname,ordererid,
+		orderer,pickuptime,payment,price,review,
+		salecomple,menunum,resname,orderdate,reskind)
+
+		VALUES(
+		
+		#{resnum}
+		,#{menuname}
+		,#{userId}
+		,#{orderer}
+		,#{pickuptime}
+		,#{payment}
+		,#{price}
+		,#{review}
+		,#{salecomple}
+		,#{menunum}
+		,#{resname}
+		,NOW()
+		,#{reskind}
+		
+		)
+		
+	</insert>
+	
+	<!-- 사업자 예약관리 -->
+	<select id="businessNowRes" parameterType="hashmap" resultType="com.example.demo.model.Res">	
+			SELECT 
+				resnum, ordererid, menuname, orderer, pickuptime, payment, price, review, salecomple, no, orderdate, menunum,resname
+			FROM
+				t3_reserve
+			where 
+				resnum = #{resnum} AND salecomple ="N"
+			ORDER BY orderdate DESC
+			LIMIT #{startNum}, #{lastNum}
+	</select>	
+	
+	<!-- 사업자 예약관리 페이지 게시물 갯수 -->
+	<select id="NowResCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_reserve 
+		where resnum = #{resnum} AND salecomple ="N"
+	</select>
+	
+	
+	<!-- 사업자 매출관리-->
+	<select id="totalSales" parameterType="hashmap" resultType="com.example.demo.model.Res">	
+			SELECT 
+				resnum, ordererid, menuname, orderer, pickuptime, payment, price, review, salecomple, no, orderdate, menunum,resname
+				, (SELECT AVG(price * menunum) FROM t3_reserve WHERE resnum = #{resnum} AND salecomple ="Y" AND orderdate = DATE(NOW())) as total
+			FROM
+				t3_reserve
+			where 
+				resnum = #{resnum} AND salecomple ="Y" AND orderdate = DATE(NOW())
+			ORDER BY orderdate DESC
+			LIMIT #{startNum}, #{lastNum}
+	</select>
+	<!-- 사업자 매출관리 전체 금액 -->
+	<select id="totalCount" parameterType="hashmap" resultType="int">	
+			SELECT 
+				SUM(price * menunum) 
+			FROM 
+				t3_reserve 
+			WHERE resnum = #{resnum} AND salecomple ="Y" AND orderdate = DATE(NOW())
+	</select>
+	
+	<!-- 사업자 매출관리 페이지 게시물 갯수 -->
+	<select id="totalSalesCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_reserve 
+		where resnum = #{resnum} AND salecomple ="Y" AND orderdate = DATE(NOW())
+	</select>
+	
+	<!-- 사업자가 예약 완료 버튼 누르면, DB값 변경!!! -->
+	<update id="saleFin" parameterType="hashmap" >	
+		UPDATE t3_reserve
+		SET
+			salecomple = "Y" 
+		WHERE no = #{no}
+	</update>
+	
+	
+	<!-- 재고수정 -->
+	<update parameterType="hashmap" id="editSupply">	
+	
+	UPDATE t3_resmenu
+	
+	SET supply = supply - #{sum}
+	
+	WHERE resnum = #{resnum} AND menuname = #{menuname} 
+	</update>
+	
+	
+	
+	<!-- 일시품절 버튼 -->
+	<update id="soldout" parameterType="hashmap" >	
+		UPDATE 
+			t3_resmenu
+		SET
+			soldout = "Y" 
+		WHERE 
+		  	idx = #{idx}
+	</update>
+	
+	<!-- 다시판매 버튼 -->
+	<update id="resell" parameterType="hashmap" >	
+		UPDATE 
+			t3_resmenu
+		SET
+			soldout = "N" 
+		WHERE 
+		  	idx = #{idx}
+	</update>
+	
+	<!--메뉴 삭제 -->
+	<delete id="deleteresmenu" parameterType="hashmap">	
+		DELETE FROM 
+			t3_resmenu 
+		WHERE 
+			idx IN ( 
+				<foreach collection="list" item="item" separator=" , ">#{item.idx}</foreach> 
+			) 
+	</delete>
+	
+
+</mapper>

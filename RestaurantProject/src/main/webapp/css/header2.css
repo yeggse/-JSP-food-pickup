@@ -1,0 +1,23 @@
+.header{
+         position: fixed;
+         top:0; 
+         left: 0;
+         right: 0;
+         width: 100%;
+           color: black;
+           height: 90px;
+           font-size: 20px;
+           font-style:fantasy;
+           font-weight: bold;
+           flot: right;
+           padding: 5px;
+           background-color:white;
+           display: inline-flex;
+           border-bottom: 1px solid #000;
+         /*   box-shadow: 10px 1px 2px 0px rgb(32 33 36 / 28%);  */
+
+}
+
+.hidden_login{
+         visibility: hidden;
+}

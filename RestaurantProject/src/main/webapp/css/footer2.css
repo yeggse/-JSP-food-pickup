@@ -1,0 +1,17 @@
+.footer{
+ 	/* color: white; */
+	height: 50px;
+	/* position: relative; 
+  transform : translateY(-100%);
+	 position: absolute; */
+	        position : fixed;  
+	 	    background-color: #393b44;  
+	        color: white;  
+	        bottom:0; 
+			left: 0;
+			right: 0;
+			width: 100%;
+	        display: inline-block;
+	        padding: 5px;
+}
+

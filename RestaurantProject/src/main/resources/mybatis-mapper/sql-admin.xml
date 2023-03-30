@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.AdminMapper">	
+ 	<!-- 일반회원 출력 -->
+	<select id="normalMemList" parameterType="hashmap" resultType="com.example.demo.model.Admin">	
+			SELECT 
+				id, kind, phonenum, acc, name, address, frontregisnum, afterregisnum, nickname
+			FROM
+				t3_account
+			where kind = "A" 
+		<if test='search != null and search != "" '>
+			and (id = #{search} or name = #{search})
+		</if>			
+			ORDER BY id ASC
+			LIMIT #{startNum}, #{lastNum}
+	</select>
+	
+	<!-- 일반회원 수 출력 -->
+	<select id="countMemCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_account where kind = "A"
+		<if test='search != null and search != "" '>
+			and (id = #{search} or name = #{search})
+		</if>
+	</select>
+	
+	
+	<!-- 일반회원 상세 정보 출력 -->
+	<select id="detailmem" resultType="com.example.demo.model.Admin">	
+		SELECT 
+			id, kind, phonenum, acc, name, address, frontregisnum, afterregisnum, nickname
+		FROM
+			t3_account
+		WHERE
+			id = #{id}
+	</select>
+	
+	<!-- 일반회원 정보 수정 -->
+	<update id="editmem" parameterType="hashmap" >
+		UPDATE t3_account 
+		SET
+			pwd = #{pwd}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 회원 삭제 -->
+	<delete id="deletemem" parameterType="hashmap">	
+		DELETE FROM 
+			t3_account 
+		WHERE 
+			id = #{id}
+			
+	</delete>	
+	
+	<!-- 사업자 회원 출력 -->
+	<select id="BuMemList" parameterType="hashmap" resultType="com.example.demo.model.Admin">	
+			SELECT 
+				id, kind, phonenum, acc, name, address, frontregisnum, afterregisnum, nickname, resname, resnum, 
+				reskind, region, resad, resphone
+			FROM
+				t3_account
+			where kind = "B"
+		<if test='search != null and search != "" '>
+			and (id = #{search} or name = #{search})
+		</if>	
+			ORDER BY id ASC
+			LIMIT #{startNum}, #{lastNum}
+	</select>
+	
+	<!-- 사업자 수 출력 -->
+	<select id="countBumCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_account where kind = "B"
+		<if test='search != null and search != "" '>
+			and (id = #{search} or name = #{search})
+		</if>
+	</select>
+	
+	<!-- 사업자 상세 정보 출력 -->
+	<select id="detailbum" resultType="com.example.demo.model.Admin">	
+		SELECT 
+			id, kind, phonenum, acc, name, address, frontregisnum, afterregisnum, nickname, resname, resnum, 
+			reskind, region, resad, resphone
+		FROM
+			t3_account
+		WHERE
+			id = #{id}
+	</select>
+	<!-- 사업자 회원 정보 수정 -->
+	<update id="editbum" parameterType="hashmap" >
+		UPDATE t3_account 
+		SET
+			pwd = #{pwd}
+		WHERE id = #{id}
+	</update>	
+</mapper>

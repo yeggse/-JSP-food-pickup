@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.MenuMapper">	
+	
+	<!-- 메뉴 추가 -->
+	<insert id="addMenu" parameterType="hashmap" useGeneratedKeys="true" keyProperty="idx" keyColumn="idx" >	
+		INSERT INTO t3_resmenu
+			(resnum, reskind, price, startdate, menuname, introduce, supply, pickuptime, soldout) 
+		VALUES
+			(#{resnum}, #{reskind}, #{price}, NOW() , #{menuname}, #{introduce}, #{supply}, #{pickuptime}, 'N')
+	</insert>
+	
+	  <!-- useGeneratedKeys="true" keyProperty="id" keyColumn="noticenum" -->
+	
+	<!-- 메뉴 이미지 추가 -->
+ 	<insert id="insertMenuImg" parameterType="hashmap">	
+	<!--  update t3_resmenu 
+	 set picture = #{img} 
+	 where resnum = #{resnum}, menuname = #{menuname}  -->
+ 		 INSERT INTO t3_resmenu_img
+			(idx, picture)  
+		
+		VALUES
+			(#{idx}, #{img}) 
+	</insert>
+
+	<!-- 메뉴 상세보기 -->
+	<select id="detailMenu" resultType="com.example.demo.model.Menu">	
+		SELECT 
+			t.idx, reskind, startdate, enddate, menuname, introduce, price, 
+			supply, orderer, pickuptime, resnum, i.picture
+		FROM
+			t3_resmenu t
+		LEFT OUTER JOIN t3_resmenu_img i on t.idx = i.idx 
+		WHERE
+			t.idx = #{idx}
+	</select>
+	
+	<!-- 메뉴 수정 -->
+	<update id="editMenu" parameterType="hashmap" >	
+		UPDATE t3_resmenu 
+		SET
+			price = #{price}, menuname = #{menuname}, introduce = #{introduce}, supply = #{supply}, 
+			pickuptime = #{pickuptime}
+		WHERE idx = #{idx}
+	</update>
+	
+	
+</mapper> 

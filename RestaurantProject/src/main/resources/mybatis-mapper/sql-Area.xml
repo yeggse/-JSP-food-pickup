@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.AreaMapper">	
+	
+		<select id="selectSiList" parameterType="hashmap" resultType="com.example.demo.model.Area">	
+		select si
+		from 
+			t_area
+		group by si
+	</select>
+	
+	<select id="selectGuList" parameterType="hashmap" resultType="com.example.demo.model.Area">	
+			select si, gu
+		from 
+			t_area
+		where si = #{si}
+		group by si, gu
+    </select>
+	
+	<select id="selectDongList" parameterType="hashmap" resultType="com.example.demo.model.Area">	
+		select si, gu, dong
+		from 
+			t_area
+		where si = #{si} and gu = #{gu}
+		group by si, gu, dong
+	</select>
+			
+</mapper>
+
+<!-- 
+		<if test='keyword != null and keyword != ""'>
+			and title like concat('%', #{keyword}, '%')
+		</if>
+		ORDER BY board_idx DESC
+ -->

@@ -1,0 +1,28 @@
+.a1 {
+	            margin-left:0px;
+	            background-color: #4c4343;
+	            color: gray;
+	            font-size:18px;
+	            border : #4c4343;
+	            border-radius:0px;
+	            width:150px;
+	            height:60px;
+	            
+	            
+	         }
+
+.div4 {
+		        margin:auto;
+		        height:1000px;
+	            background-color: #4c4343;
+	            border-radius: 5px;
+	            float:left;
+	            padding:10px
+	   }
+	   
+#bodybtn {
+	margin:auto;
+	background-color: #4c4343;
+	border: solid #4c4343;
+}
+	 

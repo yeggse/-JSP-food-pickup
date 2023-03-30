@@ -1,0 +1,52 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<script src="js/jquery.js"></script>
+		<script src="js/vue.js"></script>
+		<title>테스트</title>
+	</head>
+	<body>
+		<div id ="app">
+		  <ul>
+		     
+             <li v-for="(item,index) in todos" v-if="index%2==0">
+               {{ item.id }} {{ item.text }}
+             </li>
+             
+          </ul>
+          <ul>
+             <li v-for="test in testList">
+             {{ test }}
+             </li>
+          </ul>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+var app = new Vue({ 
+    el: '#app',
+    data: {
+    	todos : [
+    		{ id: 1, text: 'HTML 배우기'},
+    		{ id: 2, text: 'JAVASCRIPT 배우기'},
+    		{ id: 3, text: 'VUE 배우기'},
+    		{ id: 4, text: 'JAVA 배우기'},
+    		{ id: 5, text: 'PYTHON 배우기'},
+    		{ id: 6, text: '놀기'}
+    	]
+    	, testList: ["111", "222", "333"]
+      
+    }
+    , 
+    methods: {
+    
+      
+    }   
+    , created: function () {
+     
+	}
+});
+</script>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.ConsumerMapper">	
+	<!-- 일반 회원 결제내역 출력  -->
+	<select id="selectPaymentmy" parameterType="hashmap" resultType="com.example.demo.model.Consumer">	
+		SELECT
+			resnum, ordererid, menuname, orderer, pickuptime, payment, price, review, salecomple, no, orderdate, menunum,resname,reskind
+		FROM
+			t3_reserve
+		WHERE
+		 	ordererid = #{id} AND salecomple = "Y"
+		LIMIT #{startNum}, #{lastNum}
+	</select>
+	
+	<!-- 일반 회원 결제내역 개수 -->
+	<select id="PaymentmyCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_reserve where 1=1 AND salecomple = "Y"
+		<if test='id != null and id != "" '>
+			and ordererid = #{id}
+		</if>
+	</select>	 	
+	
+	
+	
+	<!-- 일반 회원 예약내역 출력 -->
+	<select id="ReserveList" parameterType="hashmap" resultType="com.example.demo.model.Consumer">	
+			SELECT 
+				resnum, ordererid, menuname, orderer, pickuptime, payment, price, review, salecomple, no, orderdate, menunum,resname,reskind
+			FROM
+				t3_reserve
+			where ordererid = #{id} AND salecomple = "N" 
+			ORDER BY orderdate DESC
+			LIMIT #{startNum}, #{lastNum}
+			
+	</select>
+	
+	<!-- 일반 회원 예약내역 개수 -->
+	<select id="ReserveCnt" parameterType="hashmap" resultType="int">	
+		SELECT 
+			COUNT(*) AS CNT
+		FROM
+			t3_reserve where 1=1 AND salecomple = "Y" 
+		<if test='id != null and id != "" '>
+			and ordererid = #{id}
+		</if>
+	</select>		
+	
+	<!-- 리뷰 이미지 추가 -->
+	<insert id="insertReviewImg" parameterType="hashmap">	
+		INSERT INTO t3_review_img
+			(reviewnum, img)  
+		VALUES
+			(#{reviewnum}, #{img})
+	</insert>
+	
+	<!-- 리뷰 수정 
+	<update id="editReview" parameterType="hashmap" >	
+		UPDATE t3_review 
+		SET
+			title = #{title}, content = #{content} 
+		WHERE number = #{number}
+	</update> -->
+	
+	<!-- 리뷰작성 작성 -->
+	<insert id="addReview" parameterType="hashmap" useGeneratedKeys="true" keyProperty="reviewnum" keyColumn="reviewnum">	
+		INSERT INTO t3_review 
+			( categori, resnum, writedate, content, grade, nickname, reskind, title, create_id,answer,resname )  
+		VALUES
+			(#{reskind},  #{resnum}, NOW() , #{content}, #{grade}, #{nickname}, #{reskind}, #{title}, #{userId},'N', #{resname})
+	</insert>
+	
+	
+	
+
+</mapper>

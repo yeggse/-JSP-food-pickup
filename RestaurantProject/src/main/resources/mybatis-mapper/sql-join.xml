@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.JoinMapper">
+	<select id="selectCheckList" parameterType="hashmap"
+		resultType="com.example.demo.model.Join">
+		SELECT
+
+		id
+		, pwd
+		, kind
+		, phonenum
+		, acc
+		, name
+		, add
+		,
+		frontregisnum
+		, afterregisnum
+		, nickname
+		, resname
+		, resnum
+		, reskind
+		,
+		region
+		, resad
+		, resphone
+
+		FROM
+		t3_account
+
+	</select>
+
+	<select id="selectCheck" parameterType="hashmap"
+		resultType="int">
+
+		SELECT
+		count(*)
+		FROM
+		t3_account
+		WHERE id = #{id}
+	</select>
+	
+		<select id="selectresnumCheck" parameterType="hashmap"
+		resultType="int">
+
+		SELECT
+		count(*)
+		FROM
+		t3_account
+		WHERE resnum = #{resnum}
+	</select>
+
+	<select id="selectnickCheck" parameterType="hashmap"
+		resultType="int">
+
+		SELECT
+		count(*)
+		FROM
+		t3_account
+		WHERE nickname = #{nickname}
+	</select>
+
+
+	<insert id="insertMember" parameterType="hashmap">
+		INSERT INTO t3_account(id,pwd,kind,phonenum,acc,name,address,address1,frontregisnum,afterregisnum,nickname,resname,resnum,reskind,region,region1,resad,resphone)
+		VALUES(
+
+		#{id}
+		, #{pwd}
+		, #{kind}
+		, #{phonenum}
+		, #{acc}
+		, #{name}
+		, #{address}
+		, #{address1}
+		,
+		#{frontregisnum}
+		, #{afterregisnum}
+		, #{nickname}
+		, #{resname}
+		, #{resnum}
+		, #{reskind}
+		, #{region}
+		, #{region1}
+		, #{resad}
+		, #{resphone}
+
+		)
+
+	</insert>
+
+     <insert id="insertRes" parameterType="hashmap">
+		INSERT INTO
+		t3_restaurant(resnum,id,region,region1,reskind,resname,resphone,resadd,resacc)
+		VALUES(
+
+        #{resnum}
+		,#{id}
+		,#{region}
+		,#{region1}
+		,#{reskind}
+		,#{resname}
+		,#{resphone}
+		,#{resad}
+		,#{acc}
+		
+		
+		
+		
+
+		)
+
+	</insert>
+
+	<select id="searchpw" parameterType="hashmap"
+		resultType="com.example.demo.model.Join">
+		SELECT
+		id, frontregisnum, afterregisnum
+		FROM
+		t3_account
+		WHERE id = #{id} AND frontregisnum = #{frontregisnum} AND
+		afterregisnum = #{afterregisnum}
+	</select>
+
+	<!-- 회원정보변경 : 개인+사업자 -->
+	<update id="datachange" parameterType="hashmap">
+		UPDATE
+		
+		t3_account SET
+			pwd = #{pwd},
+			phonenum = #{phonenum},
+			nickname = #{nickname},
+			acc = #{account},
+			address = #{address},
+			resname = #{restaurant},
+			resnum = #{resnum},
+			reskind = #{kind},
+			region = #{region},
+			region1 = #{region1},
+			resad = #{resad},
+			resphone = #{resphonenum}
+		WHERE 
+			id = #{id}
+	</update>
+	
+
+	<update id="pwdchange" parameterType="hashmap">
+		UPDATE
+		t3_account
+		SET
+		pwd = #{newpwd}
+		WHERE
+		id = #{id}
+	</update>
+	
+		
+	<select id="selectLoginList" parameterType="hashmap" resultType="com.example.demo.model.Join">	
+		SELECT
+			id, pwd, name, kind, acc, phonenum, frontregisnum, afterregisnum, address, resnum, reskind,resname,nickname
+		FROM
+			t3_account
+		WHERE id = #{id} AND pwd = #{pwd}
+	</select>
+	
+	<select id="searchid" parameterType="hashmap" resultType="com.example.demo.model.Join">	
+		SELECT
+			id, name, frontregisnum, afterregisnum
+		FROM
+			t3_account
+		WHERE name = #{name} AND frontregisnum = #{frontregisnum} AND afterregisnum = #{afterregisnum}
+	</select>
+
+
+</mapper>
